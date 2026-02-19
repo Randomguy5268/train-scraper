@@ -33,7 +33,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           # Paste the string from your Cloud Shell output below:
-          workload_identity_provider: 'projects/YOUR_PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          workload_identity_provider: 'projects/831888210715/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           service_account: 'shinkansen-scraper@project-ef09c9bb-3689-4f27-8cf.iam.gserviceaccount.com'
 
       - name: Run Scraper
