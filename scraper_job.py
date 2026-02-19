@@ -9,32 +9,37 @@ import re
 COLLECTION_NAME = "live_train_data"
 DOCUMENT_NAME = "current_status"
 
+
 def parse_location(train_name_string):
-    """
-    Extracts station names and positional state from the train name string.
-    Example: "Nozomi 12 (at Nagoya)" -> station_a: Nagoya, is_between: False
-    Example: "Hayabusa 5 (between Sendai and Furukawa)" -> station_a: Sendai, station_b: Furukawa, is_between: True
-    """
-    # Regex for "at" pattern
-    at_match = re.search(r"\(at (.*?)\)", train_name_string)
-    # Regex for "between" pattern
+    """Parses JR Cyberstation text to find station names."""
+    # Look for "between X and Y"
     between_match = re.search(r"\(between (.*?) and (.*?)\)", train_name_string)
+    # Look for "at X"
+    at_match = re.search(r"\(at (.*?)\)", train_name_string)
     
-    if at_match:
-        return {
-            "station_a": at_match.group(1).strip(),
-            "station_b": None,
-            "is_between": False
-        }
-    elif between_match:
+    if between_match:
         return {
             "station_a": between_match.group(1).strip(),
             "station_b": between_match.group(2).strip(),
             "is_between": True
         }
-    
+    elif at_match:
+        return {
+            "station_a": at_match.group(1).strip(),
+            "station_b": None,
+            "is_between": False
+        }
     return {"station_a": "Unknown", "station_b": None, "is_between": False}
 
+# IMPORTANT: In your scrape loop, you must call this:
+# loc_data = parse_location(raw_train_name_from_web)
+# train_entry = {
+#    "name": raw_train_name_from_web,
+#    "station_a": loc_data["station_a"],
+#    "station_b": loc_data["station_b"],
+#    "is_between": loc_data["is_between"],
+#    ...
+# }
 async def init_firestore():
     return firestore.AsyncClient()
 
