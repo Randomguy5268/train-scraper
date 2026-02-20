@@ -125,3 +125,16 @@ async def scrape_shinkansen():
 
 if __name__ == "__main__":
     asyncio.run(scrape_shinkansen())
+import json
+
+# ... (after you finish your Firestore update) ...
+
+# Save a simplified version for the ESP32 to download directly
+lite_data = {
+    "trains": [] # Loop through your data and add only name, sA, sB, isBetween, isUp
+}
+
+# (Add your logic to populate lite_data)
+
+with open('live_trains.json', 'w') as f:
+    json.dump(lite_data, f)
