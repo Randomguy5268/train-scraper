@@ -61,3 +61,18 @@ async def scrape_shinkansen():
 
 if __name__ == "__main__":
     asyncio.run(scrape_shinkansen())
+# Create a simple list for the ESP32
+lite_data = []
+
+# This assumes 'all_results' is your dictionary of routes
+for route_name, trains in all_results.items():
+    for train in trains:
+        lite_data.append({
+            "n": train.get('name', 'Unknown'),
+            "s": train.get('station_a', ''),
+            "b": train.get('is_between', False),
+            "d": train.get('direction', 'Down')
+        })
+
+with open('live_trains.json', 'w') as f:
+    json.dump(lite_data, f)
