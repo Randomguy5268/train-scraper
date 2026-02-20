@@ -20,21 +20,32 @@ except Exception as e:
 
 async def scrape_all():
     print("🚀 Starting Cyberstation Scraper...")
-    all_results = {} # This is now safely inside the function
+    all_results = {} # 1. Initialize the dictionary
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         context = await browser.new_context()
+        page = await context.new_page()
         
-        # --- YOUR SCRAPING LOGIC HERE ---
-        # Make sure your scraper fills 'all_results' 
-        # Example: all_results['Tokaido'] = [{'name': 'Nozomi 1', ...}]
-        
-        # [SCRAPER CODE GOES HERE]
+        # --- EXAMPLE FOR ONE ROUTE ---
+        # Repeat this pattern for Tokaido, Tohoku, etc.
+        try:
+            await page.goto("https://www.jr.cyberstation.ne.jp/n_shinkansen/c_shinkansen/event_tokaido.html", timeout=60000)
+            # 2. WAIT for the table to actually exist!
+            await page.wait_for_selector("table", timeout=10000) 
+            
+            # [INSERT YOUR PARSING LOGIC HERE]
+            # Example: trains = parse_table(await page.content())
+            
+            all_results['Tokaido'] = trains # 3. STORE the data in the dict
+            print(f"✅ Tokaido: {len(trains)} trains.")
+            
+        except Exception as e:
+            print(f"❌ Error scraping Tokaido: {e}")
         
         await browser.close()
     
-    return all_results
+    return all_results # 4. CRITICAL: Return the filled dictionary!
 
 async def main():
     # Run the scraper and get the data back
