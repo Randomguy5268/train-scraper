@@ -9,16 +9,54 @@ from google.cloud import firestore
 GCP_PROJECT_ID = "project-ef09c9bb-3689-4f27-8cf"
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
-def parse_location(text):
-    """Parses station names from text like '(at Nagoya)' or '(between X and Y)'"""
-    text = " ".join(text.split())
-    between_match = re.search(r"[\(（]between\s+(.*?)\s+and\s+(.*?)[\)）]", text, re.IGNORECASE)
+def parse_location(full_text):
+    """
+    Handles the 'Running between/at' format seen in the HTML.
+    Cleanly extracts station names.
+    """
+    text = " ".join(full_text.split()).replace('\xa0', ' ')
+    
+    # 1. Look for 'between STATION A and STATION B'
+    between_match = re.search(r"between\s+(.*?)\s+and\s+(.*?)(?=\s|$)", text, re.IGNORECASE)
     if between_match:
-        return {"a": between_match.group(1).strip(), "b": between_match.group(2).strip(), "is": True}
-    at_match = re.search(r"[\(（]at\s+(.*?)[\)）]", text, re.IGNORECASE)
+        return {
+            "a": between_match.group(1).strip().upper(),
+            "b": between_match.group(2).strip().upper(),
+            "is": True
+        }
+    
+    # 2. Look for 'at STATION A'
+    at_match = re.search(r"at\s+(.*?)(?=\s|$)", text, re.IGNORECASE)
     if at_match:
-        return {"a": at_match.group(1).strip(), "b": None, "is": False}
+        return {
+            "a": at_match.group(1).strip().upper(),
+            "b": None,
+            "is": False
+        }
+    
     return {"a": "Unknown", "b": None, "is": False}
+
+# --- INSIDE YOUR SCRAPE LOOP ---
+rows = await page.query_selector_all("#table_info_status_detail tbody tr")
+for row in rows:
+    cols = await row.query_selector_all("td")
+    if len(cols) >= 1:
+        # Get the full text including the content in <small>
+        raw_cell_text = await cols[0].inner_text() 
+        loc = parse_location(raw_cell_text)
+        
+        # We can also specifically get the train name by splitting 
+        # since 'Nozomi 314' is the first part of the text
+        train_name = raw_cell_text.split("Running")[0].strip()
+        
+        route_trains.append({
+            "name": train_name,
+            "station_a": loc["a"],
+            "station_b": loc["b"],
+            "is_between": loc["is"],
+            "direction": direction,
+            "status": await cols[1].inner_text() if len(cols) > 1 else "On time"
+        })
 
 async def scrape_shinkansen():
     print(f"🚀 Starting Cyberstation Scraper...")
