@@ -2,62 +2,71 @@ import asyncio
 from playwright.async_api import async_playwright
 from google.cloud import firestore
 from datetime import datetime, timezone
-import sys
 import re
 
 # --- CONFIGURATION ---
-COLLECTION_NAME = "live_train_data"
-DOCUMENT_NAME = "current_status"
+GCP_PROJECT_ID = "project-ef09c9bb-3689-4f27-8cf"
 
-
-def parse_location(train_name_string):
-    """Parses JR Cyberstation text to find station names."""
-    # Look for "between X and Y"
-    between_match = re.search(r"\(between (.*?) and (.*?)\)", train_name_string)
-    # Look for "at X"
-    at_match = re.search(r"\(at (.*?)\)", train_name_string)
+def parse_location(text):
+    """Extracts station names from strings like 'Nozomi 12 (at Nagoya)'"""
+    text = " ".join(text.split()) # Clean whitespace
     
+    # Match "(between Station A and Station B)"
+    between_match = re.search(r"[\(（]between\s+(.*?)\s+and\s+(.*?)[\)）]", text, re.IGNORECASE)
     if between_match:
-        return {
-            "station_a": between_match.group(1).strip(),
-            "station_b": between_match.group(2).strip(),
-            "is_between": True
-        }
-    elif at_match:
-        return {
-            "station_a": at_match.group(1).strip(),
-            "station_b": None,
-            "is_between": False
-        }
-    return {"station_a": "Unknown", "station_b": None, "is_between": False}
-
-# IMPORTANT: In your scrape loop, you must call this:
-# loc_data = parse_location(raw_train_name_from_web)
-# train_entry = {
-#    "name": raw_train_name_from_web,
-#    "station_a": loc_data["station_a"],
-#    "station_b": loc_data["station_b"],
-#    "is_between": loc_data["is_between"],
-#    ...
-# }
-async def init_firestore():
-    return firestore.AsyncClient()
-
-async def scrape_once():
-    # ... (Your existing Playwright scraping logic here) ...
-    # Inside your loop where you process the 'all_trains' list:
+        return {"a": between_match.group(1).strip(), "b": between_match.group(2).strip(), "is": True}
     
-    # Example of how to integrate the parser inside your loop:
-    # loc = parse_location(raw_name_from_site)
-    # train_entry = {
-    #     "name": raw_name_from_site,
-    #     "station_a": loc["station_a"],
-    #     "station_b": loc["station_b"],
-    #     "is_between": loc["is_between"],
-    #     "direction": direction,
-    #     "event_time": event_time,
-    #     "destination": get_destination(route, direction)
-    # }
-    pass
+    # Match "(at Station A)"
+    at_match = re.search(r"[\(（]at\s+(.*?)[\)）]", text, re.IGNORECASE)
+    if at_match:
+        return {"a": at_match.group(1).strip(), "b": None, "is": False}
+    
+    return {"a": "Unknown", "b": None, "is": False}
 
-# Update the main execution to use the new fields
+async def scrape_shinkansen():
+    db = firestore.AsyncClient(project=GCP_PROJECT_ID)
+    routes = {
+        "Tokaido-Sanyo": "https://www.shinkansen.co.jp/pc/en/Tokaido-Sanyo/",
+        "Tohoku-Hokkaido": "https://www.shinkansen.co.jp/pc/en/Tohoku-Hokkaido/",
+        "Hokuriku": "https://www.shinkansen.co.jp/pc/en/Hokuriku/",
+        "Joetsu": "https://www.shinkansen.co.jp/pc/en/Joetsu/"
+    }
+    
+    final_data = {"timestamp": datetime.now(timezone.utc).isoformat(), "routes": {}}
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_row()
+        
+        for route_name, url in routes.items():
+            await page.goto(url)
+            # This selector looks for the train name cells in the JR status table
+            train_elements = await page.query_selector_all(".train_name") 
+            
+            route_trains = []
+            for el in train_elements:
+                raw_name = await el.inner_text()
+                loc = parse_location(raw_name)
+                
+                # Basic direction logic (usually based on odd/even train numbers or table side)
+                # For this example, we assume "Up" but your scraper logic should verify
+                direction = "Up" 
+                
+                route_trains.append({
+                    "name": raw_name,
+                    "station_a": loc["a"],
+                    "station_b": loc["b"],
+                    "is_between": loc["is"],
+                    "direction": direction,
+                    "event_time": datetime.now().strftime("%H:%M")
+                })
+            final_data["routes"][route_name] = route_trains
+        
+        await browser.close()
+    
+    # Save to Firestore
+    await db.collection("live_train_data").document("current_status").set(final_data)
+    print("✅ Scrape and Parse Complete")
+
+if __name__ == "__main__":
+    asyncio.run(scrape_shinkansen())
