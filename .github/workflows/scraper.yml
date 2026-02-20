@@ -18,13 +18,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      # If your previous code worked on GitHub, you MUST have had this authentication step. 
-      # Make sure it's here!
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
