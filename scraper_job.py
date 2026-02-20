@@ -1,78 +1,72 @@
 import json
 import asyncio
-import re
+import os
 from playwright.async_api import async_playwright
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# ... (Keep your existing Imports, Credential Setup, and Map definitions here) ...
+# --- 1. SETUP FIREBASE (With safety check) ---
+try:
+    # Look for the secret you (hopefully) added to GitHub
+    if os.environ.get('FIREBASE_SERVICE_ACCOUNT'):
+        cert_dict = json.loads(os.environ.get('FIREBASE_SERVICE_ACCOUNT'))
+        cred = credentials.Certificate(cert_dict)
+        firebase_admin.initialize_app(cred)
+        print("✅ Firebase Initialized")
+    else:
+        print("⚠️ No Firebase secret found. Skipping cloud sync, focusing on JSON only.")
+except Exception as e:
+    print(f"⚠️ Firebase Setup Failed: {e}")
 
-async def scrape_shinkansen():
+async def scrape_all():
     print("🚀 Starting Cyberstation Scraper...")
-    
-    # This will hold the final structure for Firestore and the Lite JSON
-    all_results = {}
-    
+    all_results = {} # This is now safely inside the function
+
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        # Use a single context with specific GitHub Actions bypasses
-        context = await browser.new_context(ignore_https_errors=True)
+        browser = await p.chromium.launch()
+        context = await browser.new_context()
         
-        # --- YOUR SCRAPING LOGIC GOES HERE ---
-        # Example loop structure based on your logs:
-        # for route in ROUTES:
-        #    trains = await scrape_route(context, route)
-        #    all_results[route['name']] = trains
-        #    print(f"✅ {route['name']}: {len(trains)} trains.")
-
+        # --- YOUR SCRAPING LOGIC HERE ---
+        # Make sure your scraper fills 'all_results' 
+        # Example: all_results['Tokaido'] = [{'name': 'Nozomi 1', ...}]
+        
+        # [SCRAPER CODE GOES HERE]
+        
         await browser.close()
+    
+    return all_results
 
-    # 1. Sync to Firestore (Your existing logic)
+async def main():
+    # Run the scraper and get the data back
+    all_results = await scrape_all()
+    
+    # --- 2. TRY FIRESTORE SYNC ---
     try:
         db = firestore.client()
-        doc_ref = db.collection('live_train_data').document('current_status')
-        doc_ref.set({
+        db.collection('live_train_data').document('current_status').set({
             "routes": all_results,
             "last_updated": firestore.SERVER_TIMESTAMP
         })
-        print("🏁 Successfully synced to Firestore.")
-    except Exception as e:
-        print(f"❌ Firestore Sync Failed: {e}")
+        print("🏁 Firestore Sync Complete.")
+    except Exception:
+        print("⏭️ Skipping Firestore (using local JSON only).")
 
-    # 2. GENERATE LITE JSON FOR ESP32
-    print("📦 Generating live_trains.json for ESP32...")
+    # --- 3. GENERATE LITE JSON FOR ESP32 ---
+    print("📦 Generating live_trains.json...")
     lite_data = []
-
-    for route_name, trains in all_results.items():
-        for train in trains:
-            # We use short keys (n, s, b, d) to keep the file size tiny
+    
+    for route, trains in all_results.items():
+        for t in trains:
             lite_data.append({
-                "n": train.get('name', 'Unknown'),
-                "s": train.get('station_a', ''),
-                "b": train.get('is_between', False),
-                "d": train.get('direction', 'Down')
+                "n": t.get('name', '??'),
+                "s": t.get('station_a', ''),
+                "b": t.get('is_between', False),
+                "d": t.get('direction', 'Down')
             })
 
-    # Save the file locally so GitHub Action can commit it
     with open('live_trains.json', 'w') as f:
         json.dump(lite_data, f)
-    
-    print(f"✅ Created live_trains.json with {len(lite_data)} trains.")
+    print(f"✅ Success! Created JSON with {len(lite_data)} trains.")
 
 if __name__ == "__main__":
-    asyncio.run(scrape_shinkansen())
-# Create a simple list for the ESP32
-lite_data = []
-
-# This assumes 'all_results' is your dictionary of routes
-for route_name, trains in all_results.items():
-    for train in trains:
-        lite_data.append({
-            "n": train.get('name', 'Unknown'),
-            "s": train.get('station_a', ''),
-            "b": train.get('is_between', False),
-            "d": train.get('direction', 'Down')
-        })
-
-with open('live_trains.json', 'w') as f:
-    json.dump(lite_data, f)
+    asyncio.run(main())
