@@ -25,3 +25,11 @@ jobs:
 
       - name: Run Scraper
         run: python scraper_job.py
+        
+- name: Commit and Push Lite Data
+        run: |
+          git config --global user.name "TrainBot"
+          git config --global user.email "bot@github.com"
+          git add live_trains.json
+          git commit -m "Update live train data" || exit 0
+          git push
