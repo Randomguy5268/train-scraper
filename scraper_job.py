@@ -1,92 +1,137 @@
 import json
 import asyncio
-import os
 from playwright.async_api import async_playwright
-import firebase_admin
-from firebase_admin import credentials, firestore
 
-# --- 1. SETUP FIREBASE (With safety check) ---
-try:
-    # Look for the secret you (hopefully) added to GitHub
-    if os.environ.get('FIREBASE_SERVICE_ACCOUNT'):
-        cert_dict = json.loads(os.environ.get('FIREBASE_SERVICE_ACCOUNT'))
-        cred = credentials.Certificate(cert_dict)
-        firebase_admin.initialize_app(cred)
-        print("✅ Firebase Initialized")
-    else:
-        print("⚠️ No Firebase secret found. Skipping cloud sync, focusing on JSON only.")
-except Exception as e:
-    print(f"⚠️ Firebase Setup Failed: {e}")
+# --- CONFIGURATION ---
+WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
+
+# --- DIRECTION MAPPING ---
+DESTINATION_MAP = {
+    ("Tokaido/Sanyo", "Up"): "TOKYO",
+    ("Tokaido/Sanyo", "Down"): "HAKATA",
+    ("Tohoku/Hokkaido", "Up"): "TOKYO",
+    ("Tohoku/Hokkaido", "Down"): "HAKODATE-HOKUTO",
+    ("Joetsu", "Up"): "TOKYO",
+    ("Joetsu", "Down"): "NIIGATA",
+    ("Hokuriku", "Up"): "TOKYO",
+    ("Hokuriku", "Down"): "TSURUGU",
+    ("Yamagata", "Up"): "TOKYO",
+    ("Yamagata", "Down"): "SHINJO",
+    ("Akita", "Up"): "TOKYO",
+    ("Akita", "Down"): "AKITA",
+    ("Kyushu", "Up"): "HAKATA",
+    ("Kyushu", "Down"): "KAGOSHIMA-CHUO",
+}
+
+def get_destination(route, direction):
+    return DESTINATION_MAP.get((route, direction), f"To {direction}bound {route}")
 
 async def scrape_all():
-    print("🚀 Starting Cyberstation Scraper...")
-    all_results = {} # 1. Initialize the dictionary
+    print("🚀 Starting Cyberstation Scraper (English Site)...")
+    all_trains = []
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
-        context = await browser.new_context()
+        # Use a real user agent to prevent blocks
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+        )
         page = await context.new_page()
-        
-        # --- EXAMPLE FOR ONE ROUTE ---
-        # Repeat this pattern for Tokaido, Tohoku, etc.
+
         try:
-            await page.goto("https://www.jr.cyberstation.ne.jp/n_shinkansen/c_shinkansen/event_tokaido.html", timeout=60000)
-            # 2. WAIT for the table to actually exist!
-            await page.wait_for_selector("table", timeout=10000) 
-            
-            # [INSERT YOUR PARSING LOGIC HERE]
-            # Example: trains = parse_table(await page.content())
-            
-            all_results['Tokaido'] = trains # 3. STORE the data in the dict
-            print(f"✅ Tokaido: {len(trains)} trains.")
-            
+            print("📡 Navigating to main site...")
+            await page.goto(WEBSITE_URL, timeout=60000)
+            await page.click('a:has-text("Shinkansen Status")', timeout=10000)
+            await page.wait_for_selector("#input-select-route", timeout=15000)
+
+            # Get route names
+            await page.click("#input-select-route")
+            await page.wait_for_selector("#modal-select-route-shinkansen.uk-open", timeout=5000)
+
+            route_buttons_initial = await page.query_selector_all("#modal-select-route-shinkansen button.uk-button")
+            route_names = []
+            for btn in route_buttons_initial:
+                span = await btn.query_selector("span.route_name")
+                if span:
+                    route_names.append(await span.inner_text())
+                else:
+                    route_names.append("Unknown")
+
+            await page.keyboard.press("Escape")
+            await page.wait_for_selector("#modal-select-route-shinkansen", state="hidden")
+
+            print(f"✅ Found {len(route_names)} routes to scan.")
+
+            # Iterate through each route
+            for i, route_name in enumerate(route_names):
+                print(f"🔍 Scanning route: {route_name}...")
+                await page.click("#input-select-route")
+                await page.wait_for_selector("#modal-select-route-shinkansen.uk-open", timeout=5000)
+
+                all_buttons_fresh = await page.query_selector_all("#modal-select-route-shinkansen button.uk-button")
+                if i < len(all_buttons_fresh):
+                    await all_buttons_fresh[i].click()
+                else:
+                    await page.keyboard.press("Escape")
+                    await page.wait_for_selector("#modal-select-route-shinkansen", state="hidden")
+                    continue
+
+                await page.wait_for_selector("#modal-select-route-shinkansen", state="hidden", timeout=5000)
+                await page.wait_for_timeout(500) # Replaced time.sleep with Playwright's async sleep
+
+                # Scrape Up and Down
+                for direction in ["Up", "Down"]:
+                    if direction == "Up":
+                        await page.click("#up_button")
+                    else:
+                        await page.click("#down_button")
+
+                    await page.click("#train_info_request")
+
+                    try:
+                        await page.wait_for_selector("#table_info_status_detail tbody tr", timeout=7000)
+                        rows = await page.query_selector_all("#table_info_status_detail tbody tr")
+
+                        destination_station = get_destination(route_name, direction)
+
+                        for row in rows:
+                            cols = await row.query_selector_all("td")
+                            if len(cols) >= 2:
+                                train_name_raw = await cols[0].inner_text()
+                                status_raw = await cols[1].inner_text()
+                                
+                                train_name = ' '.join(train_name_raw.split())
+                                status = ' '.join(status_raw.split())
+
+                                # Filter out ended service
+                                if "service ended" not in status.lower():
+                                    all_trains.append({
+                                        "n": train_name,
+                                        "s": status, # Saving status for now, we'll need to extract station
+                                        "b": False,  # Simplified for now
+                                        "d": direction
+                                    })
+                    except Exception as e:
+                        # Timeout just means no trains currently listed for that direction
+                        pass 
+
         except Exception as e:
-            print(f"❌ Error scraping Tokaido: {e}")
-        
-        await browser.close()
-    
-    return all_results # 4. CRITICAL: Return the filled dictionary!
+            print(f"❌ Critical Error during scraping: {e}")
+        finally:
+            await browser.close()
+
+    return all_trains
 
 async def main():
-    # Run the scraper and get the data back
-    all_results = await scrape_all()
+    trains_list = await scrape_all()
     
-    # --- 2. TRY FIRESTORE SYNC ---
-    try:
-        db = firestore.client()
-        db.collection('live_train_data').document('current_status').set({
-            "routes": all_results,
-            "last_updated": firestore.SERVER_TIMESTAMP
-        })
-        print("🏁 Firestore Sync Complete.")
-    except Exception:
-        print("⏭️ Skipping Firestore (using local JSON only).")
-
-    # --- 3. GENERATE LITE JSON FOR ESP32 ---
-    # --- 3. GENERATE LITE JSON FOR ESP32 ---
-    print(f"📦 Found {len(all_results)} routes. Generating JSON...")
-    lite_data = []
+    # --- GENERATE LITE JSON FOR ESP32 ---
+    print(f"📦 Generating JSON with {len(trains_list)} active trains...")
     
-    # Debug: Print the keys to see what the scraper found
-    print(f"Debug: Routes found: {list(all_results.keys())}")
-
-    for route_name, trains in all_results.items():
-        print(f"Processing {route_name}: found {len(trains)} trains")
-        for t in trains:
-            lite_data.append({
-                "n": t.get('name', '??'),
-                "s": t.get('station_a', ''),
-                "b": t.get('is_between', False),
-                "d": t.get('direction', 'Down')
-            })
-
-    if not lite_data:
-        print("⚠️ WARNING: No trains were found in any route!")
-
     with open('live_trains.json', 'w') as f:
-        json.dump(lite_data, f)
+        json.dump(trains_list, f)
     
-    print(f"✅ Created JSON with {len(lite_data)} trains.")
+    print("✅ Success! live_trains.json saved.")
 
 if __name__ == "__main__":
     asyncio.run(main())
