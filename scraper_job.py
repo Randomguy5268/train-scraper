@@ -81,23 +81,43 @@ async def scrape_all():
                                 train_name = ' '.join(train_name_raw.split())
                                 status = ' '.join(status_raw.split())
 
-                                if "service ended" not in status.lower() and status.strip() != "":
-                                    # PRINT THE RAW TEXT SO WE CAN SEE IT IN GITHUB LOGS
-                                    print(f"      🚅 {train_name} | {status}")
+                               if "service ended" not in status.lower() and status.strip() != "":
+                                    # Split the status at the "|" to ignore the "On time" / "Delay" part
+                                    status_text = status.split('|')[0].strip()
                                     
-                                    match = re.search(r'(?:Departed|Arrived at)\s+(.+?)\s+at', status, re.IGNORECASE)
-                                    station_name = ""
+                                    station_a = ""
+                                    station_b = ""
                                     is_between = False
                                     
-                                    if match:
-                                        station_name = match.group(1).strip()
-                                        is_between = "Departed" in status 
-                                    else:
-                                        # FALLBACK: If regex fails, don't throw the train away!
-                                        print(f"      ⚠️ Regex missed! Saving raw status.")
-                                        station_name = status 
-                                        is_between = False
+                                    # Case 1: Train is moving between two stations
+                                    if "Running between" in status_text:
+                                        match = re.search(r'Running between\s+(.+?)\s+and\s+(.+)', status_text, re.IGNORECASE)
+                                        if match:
+                                            station_a = match.group(1).strip()
+                                            station_b = match.group(2).strip()
+                                            is_between = True
+                                            
+                                    # Case 2: Train is stopped at a station
+                                    elif "Stopped at" in status_text:
+                                        match = re.search(r'Stopped at\s+(.+)', status_text, re.IGNORECASE)
+                                        if match:
+                                            station_a = match.group(1).strip()
+                                            is_between = False
 
+                                    # Save the clean data
+                                    if station_a:
+                                        train_data = {
+                                            "n": train_name,
+                                            "s": station_a,
+                                            "b": is_between,
+                                            "d": direction
+                                        }
+                                        if is_between:
+                                            train_data["s_b"] = station_b  # Add the second station for the ESP32 to calculate the midpoint
+                                            
+                                        all_trains.append(train_data)
+                                    else:
+                                        print(f"      ⚠️ Parser missed! Raw status: {status}")
                                     all_trains.append({
                                         "n": train_name,
                                         "s": station_name,
