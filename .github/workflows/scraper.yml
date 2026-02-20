@@ -2,10 +2,9 @@ name: Shinkansen Live Scraper
 
 on:
   schedule:
-    # Runs every minute of hours 21, 22, 23, and 0 through 14 (UTC)
-    # This exactly matches 4:00 PM to 9:59 AM EST
+    # Runs every minute from 4:00 PM to 9:59 AM EST
     - cron: '* 21-23,0-14 * * *'
-  workflow_dispatch: # Keeps the manual run button just in case
+  workflow_dispatch: 
 
 jobs:
   scrape-and-update:
