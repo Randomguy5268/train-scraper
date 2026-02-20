@@ -130,24 +130,23 @@ import json
 # ... (after you finish your Firestore update) ...
 
 # Save a simplified version for the ESP32 to download directly
-lite_data = {
-    "trains": [] # Loop through your data and add only name, sA, sB, isBetween, isUp
-}
-
-# (Add your logic to populate lite_data)
-
-with open('live_trains.json', 'w') as f:
-    json.dump(lite_data, f)
-# Create a simple list for the ESP32
+# --- LITE JSON FOR ESP32 ---
+print("📦 Generating lite_trains.json for ESP32...")
 lite_data = []
 
-for train in all_trains: # Use whatever variable name your scraper uses for the list
-    lite_data.append({
-        "n": train['name'],
-        "s": train['station_a'],
-        "b": train['is_between'],
-        "d": train['direction'] # "Up" or "Down"
-    })
+# Assuming your scraper stores all the train dictionaries in a list 
+# typically named 'results' or 'train_data' before the Firestore sync.
+# If 'results' doesn't work, check the variable name used in your Firestore update line.
+for route_name, trains in all_results.items(): 
+    for train in trains:
+        lite_data.append({
+            "n": train.get('name', 'Unknown'),
+            "s": train.get('station_a', ''),
+            "b": train.get('is_between', False),
+            "d": train.get('direction', 'Down')
+        })
 
 with open('live_trains.json', 'w') as f:
     json.dump(lite_data, f)
+
+print(f"✅ Created lite_trains.json with {len(lite_data)} trains.")
