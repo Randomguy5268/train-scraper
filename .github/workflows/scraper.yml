@@ -2,8 +2,8 @@ name: Shinkansen Live Scraper
 
 on:
   schedule:
-    # Runs every minute from 21:00 UTC (4 PM EST) to 14:59 UTC (9:59 AM EST)
-    - cron: '* 21-23,0-14 * * *'
+    # Runs every 5 minutes from 4 PM EST to 9:59 AM EST
+    - cron: '*/5 21-23,0-14 * * *'
   workflow_dispatch: 
 
 jobs:
