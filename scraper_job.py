@@ -3,6 +3,7 @@ import asyncio
 import re
 from playwright.async_api import async_playwright
 
+# --- CONFIGURATION ---
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
 async def scrape_all():
@@ -10,6 +11,7 @@ async def scrape_all():
     all_trains = []
 
     async with async_playwright() as p:
+        # Launch with a real-looking user agent to bypass anti-bot checks
         browser = await p.chromium.launch(headless=True)
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
@@ -22,6 +24,7 @@ async def scrape_all():
             await page.click('a:has-text("Shinkansen Status")', timeout=10000)
             await page.wait_for_selector("#input-select-route", timeout=15000)
 
+            # Open the modal to find all route names
             await page.click("#input-select-route")
             await page.wait_for_selector("#modal-select-route-shinkansen.uk-open", timeout=5000)
 
@@ -40,6 +43,7 @@ async def scrape_all():
 
             print(f"✅ Found {len(route_names)} routes to scan.")
 
+            # Loop through each Shinkansen route
             for i, route_name in enumerate(route_names):
                 print(f"\n🔍 Scanning route: {route_name}...")
                 
@@ -56,6 +60,7 @@ async def scrape_all():
                 await page.wait_for_selector("#modal-select-route-shinkansen", state="hidden", timeout=5000)
                 await page.wait_for_timeout(500)
 
+                # Check both Up and Down directions
                 for direction in ["Up", "Down"]:
                     if direction == "Up":
                         await page.click("#up_button")
@@ -65,9 +70,9 @@ async def scrape_all():
                     await page.click("#train_info_request")
 
                     try:
-                        # BUMPED TIMEOUT TO 15 SECONDS FOR GITHUB RUNNERS
+                        # Wait for the table, keeping the timeout generous for GitHub runners
                         await page.wait_for_selector("#table_info_status_detail tbody tr", timeout=15000)
-                        await page.wait_for_timeout(1000) # Give the DOM a second to swap the old table out
+                        await page.wait_for_timeout(1000) 
                         
                         rows = await page.query_selector_all("#table_info_status_detail tbody tr")
                         print(f"   -> Found {len(rows)} rows for {direction} direction")
@@ -81,8 +86,11 @@ async def scrape_all():
                                 train_name = ' '.join(train_name_raw.split())
                                 status = ' '.join(status_raw.split())
 
-                               if "service ended" not in status.lower() and status.strip() != "":
-                                    # Split the status at the "|" to ignore the "On time" / "Delay" part
+                                # Skip trains that are done for the day
+                                if "service ended" not in status.lower() and status.strip() != "":
+                                    
+                                    # --- THE NEW TEXT PARSER ---
+                                    # Remove the "| On time" or "| Delay" part
                                     status_text = status.split('|')[0].strip()
                                     
                                     station_a = ""
@@ -112,21 +120,16 @@ async def scrape_all():
                                             "b": is_between,
                                             "d": direction
                                         }
+                                        # Include the destination station so the ESP32 can light up the LED between them
                                         if is_between:
-                                            train_data["s_b"] = station_b  # Add the second station for the ESP32 to calculate the midpoint
+                                            train_data["s_b"] = station_b  
                                             
                                         all_trains.append(train_data)
                                     else:
                                         print(f"      ⚠️ Parser missed! Raw status: {status}")
-                                    all_trains.append({
-                                        "n": train_name,
-                                        "s": station_name,
-                                        "b": is_between,
-                                        "d": direction
-                                    })
+
                     except Exception as e:
-                        # NO MORE SILENT FAILURES. Print exactly why it stopped.
-                        print(f"   -> ❌ Error or Timeout for {direction}: {e}")
+                        print(f"   -> ❌ No trains found or Timeout for {direction}: {e}")
 
         except Exception as e:
             print(f"❌ Critical Error during scraping: {e}")
