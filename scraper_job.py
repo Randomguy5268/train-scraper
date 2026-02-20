@@ -138,3 +138,16 @@ lite_data = {
 
 with open('live_trains.json', 'w') as f:
     json.dump(lite_data, f)
+# Create a simple list for the ESP32
+lite_data = []
+
+for train in all_trains: # Use whatever variable name your scraper uses for the list
+    lite_data.append({
+        "n": train['name'],
+        "s": train['station_a'],
+        "b": train['is_between'],
+        "d": train['direction'] # "Up" or "Down"
+    })
+
+with open('live_trains.json', 'w') as f:
+    json.dump(lite_data, f)
