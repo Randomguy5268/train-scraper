@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright, TimeoutError
 from google.cloud import firestore
-from google.auth.credentials import AnonymousCredentials
+
 # --- CONFIGURATION ---
 GCP_PROJECT_ID = "project-ef09c9bb-3689-4f27-8cf"
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
@@ -40,8 +40,8 @@ def parse_location(full_text):
 
 async def scrape_shinkansen():
     print("🚀 Starting Cyberstation Scraper...")
-db = firestore.AsyncClient(project=GCP_PROJECT_ID, credentials=AnonymousCredentials())
-final_data = {"timestamp": datetime.now(timezone.utc).isoformat(), "routes": {}}
+    db = firestore.AsyncClient(project=GCP_PROJECT_ID)
+    final_data = {"timestamp": datetime.now(timezone.utc).isoformat(), "routes": {}}
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
