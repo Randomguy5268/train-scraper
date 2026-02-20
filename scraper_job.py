@@ -40,8 +40,8 @@ def parse_location(full_text):
 
 async def scrape_shinkansen():
     print("🚀 Starting Cyberstation Scraper...")
-    db = firestore.AsyncClient(project=GCP_PROJECT_ID)
-    final_data = {"timestamp": datetime.now(timezone.utc).isoformat(), "routes": {}}
+db = firestore.AsyncClient(project=GCP_PROJECT_ID, credentials=AnonymousCredentials())
+final_data = {"timestamp": datetime.now(timezone.utc).isoformat(), "routes": {}}
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
