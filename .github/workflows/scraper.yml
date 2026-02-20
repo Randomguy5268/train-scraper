@@ -2,17 +2,17 @@ name: Shinkansen Scraper
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every 5 minutes
-  workflow_dispatch: # Allows you to run it manually
+    - cron: '*/5 * * * *'
+  workflow_dispatch: 
 
 permissions:
-  contents: write # CRITICAL: Allows the bot to save live_trains.json
+  contents: write # Allows the bot to save the json file
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,20 +20,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Chromium
         run: playwright install chromium
 
       - name: Run Scraper
-        env:
-          # If you're using a Firebase Service Account key, 
-          # make sure it's in your GitHub Secrets!
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: python scraper_job.py
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Commit and Push Lite JSON
         run: |
