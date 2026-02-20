@@ -26,7 +26,7 @@ jobs:
       - name: Run Scraper
         run: python scraper_job.py
         
-- name: Commit and Push Lite Data
+      - name: Commit and Push Lite Data
         run: |
           git config --global user.name "TrainBot"
           git config --global user.email "bot@github.com"
