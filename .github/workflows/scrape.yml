@@ -1,40 +1,28 @@
-name: Shinkansen Scraper
+name: Shinkansen Live Scraper
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs the scraper every 5 minutes
-  workflow_dispatch: # Allows you to manually click a button to run it
-
-# CRITICAL: These permissions are required for Workload Identity Federation to generate tokens
-permissions:
-  contents: 'read'
-  id-token: 'write'
+    # Runs every minute of hours 21, 22, 23, and 0 through 14 (UTC)
+    # This exactly matches 4:00 PM to 9:59 AM EST
+    - cron: '* 21-23,0-14 * * *'
+  workflow_dispatch: # Keeps the manual run button just in case
 
 jobs:
   scrape-and-update:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements_scraper.txt
-          playwright install --with-deps chromium
-
-      - name: Authenticate to Google Cloud keyless
-        id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          # Paste the string from your Cloud Shell output below:
-          workload_identity_provider: 'projects/831888210715/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
-          service_account: 'shinkansen-scraper@project-ef09c9bb-3689-4f27-8cf.iam.gserviceaccount.com'
+          pip install -r requirements.txt
+          playwright install chromium
 
       - name: Run Scraper
         run: python scraper_job.py
