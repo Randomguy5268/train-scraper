@@ -52,10 +52,15 @@ async def main():
         print("⏭️ Skipping Firestore (using local JSON only).")
 
     # --- 3. GENERATE LITE JSON FOR ESP32 ---
-    print("📦 Generating live_trains.json...")
+    # --- 3. GENERATE LITE JSON FOR ESP32 ---
+    print(f"📦 Found {len(all_results)} routes. Generating JSON...")
     lite_data = []
     
-    for route, trains in all_results.items():
+    # Debug: Print the keys to see what the scraper found
+    print(f"Debug: Routes found: {list(all_results.keys())}")
+
+    for route_name, trains in all_results.items():
+        print(f"Processing {route_name}: found {len(trains)} trains")
         for t in trains:
             lite_data.append({
                 "n": t.get('name', '??'),
@@ -64,9 +69,13 @@ async def main():
                 "d": t.get('direction', 'Down')
             })
 
+    if not lite_data:
+        print("⚠️ WARNING: No trains were found in any route!")
+
     with open('live_trains.json', 'w') as f:
         json.dump(lite_data, f)
-    print(f"✅ Success! Created JSON with {len(lite_data)} trains.")
+    
+    print(f"✅ Created JSON with {len(lite_data)} trains.")
 
 if __name__ == "__main__":
     asyncio.run(main())
