@@ -9,7 +9,8 @@ WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
 def inject_ghost_trains(live_trains):
     """
-    Injects mountain Shinkansens based on static timetable.json.
+    Injects mountain Shinkansens.
+    Ensures lights stay lit until the next station is reached.
     """
     try:
         with open('timetable.json', 'r') as f:
@@ -18,13 +19,12 @@ def inject_ghost_trains(live_trains):
         print("⚠️ timetable.json not found!")
         return live_trains
 
-    # Map scraped names to your ESP32 C++ stationMap
     rename_map = {
         "SAKURAMBOHIGASHINE": "SAKURANBO-HIGASHINE",
         "NASUSHIOBARA": "NASU-SHIOBARA",
         "HIGASHIHIROSHIMA": "HIGASHI-HIROSHIMA",
         "KAMINOYAMA-ONSEN": "KAMINOYAMA ONSEN",
-        "SHIZUKUISHI": "SHIZUKUSHI", # Matches your C++ typo
+        "SHIZUKUISHI": "SHIZUKUSHI", 
         "SHIROISHIZAO": "SHIROISHI-ZAO"
     }
 
@@ -44,29 +44,36 @@ def inject_ghost_trains(live_trains):
         direction = data.get("direction", "Down")
         train_name = train_id.split('_')[0] 
 
-        for i in range(len(stops) - 1):
-            time_a = to_mins(stops[i]['time'])
-            time_b = to_mins(stops[i+1]['time'])
+        # We look at the total window of the train's mountain journey
+        first_stop_time = to_mins(stops[0]['time'])
+        last_stop_time = to_mins(stops[-1]['time'])
 
-            if time_a <= current_minutes <= time_b:
-                is_between = current_minutes > time_a
-                sA = rename_map.get(stops[i]['station'], stops[i]['station'])
-                
-                ghost_train = {
-                    "n": train_name,
-                    "s": sA,
-                    "b": is_between,
-                    "d": direction
-                }
-                if is_between:
+        # If the train is currently active in the mountains
+        if first_stop_time <= current_minutes <= last_stop_time:
+            for i in range(len(stops) - 1):
+                time_a = to_mins(stops[i]['time'])
+                time_b = to_mins(stops[i+1]['time'])
+
+                # The train "belongs" to this segment until it hits time_b
+                if time_a <= current_minutes < time_b:
+                    sA = rename_map.get(stops[i]['station'], stops[i]['station'])
                     sB = rename_map.get(stops[i+1]['station'], stops[i+1]['station'])
-                    ghost_train["s_b"] = sB
+                    
+                    # If it's exactly at the minute of departure, b=False (Solid LED)
+                    # If it's anytime after that but before the next stop, b=True (Moving/Between)
+                    is_between = current_minutes > time_a
 
-                live_trains.append(ghost_train)
-                ghosts_added += 1
-                break 
+                    live_trains.append({
+                        "n": train_name,
+                        "s": sA,
+                        "s_b": sB,
+                        "b": is_between,
+                        "d": direction
+                    })
+                    ghosts_added += 1
+                    break 
 
-    print(f"👻 Injected {ghosts_added} Ghost Trains.")
+    print(f"👻 Injected {ghosts_added} Ghost Trains with persistence logic.")
     return live_trains
 
 async def scrape_live_data():
