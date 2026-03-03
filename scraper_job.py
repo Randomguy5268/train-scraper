@@ -1,12 +1,81 @@
 import json
 import asyncio
 import re
+from datetime import datetime
+import pytz
 from playwright.async_api import async_playwright
 
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
-async def scrape_all():
-    print("🚀 Starting Cyberstation Scraper (Using HTML <small> tag parsing)...")
+def inject_ghost_trains(live_trains):
+    """
+    Reads the static timetable.json and injects mountain branch Shinkansens 
+    (Akita/Yamagata lines) based on the current time in Japan.
+    """
+    try:
+        with open('timetable.json', 'r') as f:
+            timetable = json.load(f)
+    except FileNotFoundError:
+        print("⚠️ timetable.json not found. Run the timetable ripper first. Skipping mountain lines.")
+        return live_trains
+
+    # Get current time in Japan
+    jst = pytz.timezone('Asia/Tokyo')
+    now = datetime.now(jst)
+    current_minutes = now.hour * 60 + now.minute
+
+    ghosts_added = 0
+
+    def to_mins(t_str):
+        h, m = map(int, t_str.split(':'))
+        return h * 60 + m
+
+    for train_id, data in timetable.items():
+        stops = data.get("stops", [])
+        if len(stops) < 2:
+            continue
+
+        direction = data.get("direction", "Down")
+        train_name = train_id.split('_')[0]  # Extracts "Komachi" or "Tsubasa"
+
+        # Find where the train is right now based on the clock
+        for i in range(len(stops) - 1):
+            stop_a = stops[i]
+            stop_b = stops[i+1]
+
+            time_a = to_mins(stop_a['time'])
+            time_b = to_mins(stop_b['time'])
+
+            # Handle midnight rollover just in case
+            if time_b < time_a:
+                time_b += 24 * 60
+
+            # If the current time falls between these two stops
+            if time_a <= current_minutes <= time_b:
+                is_between = current_minutes > time_a and current_minutes < time_b
+
+                ghost_train = {
+                    "n": train_name,
+                    "s": stop_a['station'],
+                    "b": is_between,
+                    "d": direction
+                }
+                
+                if is_between:
+                    ghost_train["s_b"] = stop_b['station']
+
+                live_trains.append(ghost_train)
+                ghosts_added += 1
+                break # Found its current location, move to the next train in the schedule
+
+    print(f"👻 Automatically injected {ghosts_added} scheduled mountain trains!")
+    return live_trains
+
+async def scrape_live_trains():
+    """
+    Scrapes the live JR Cyberstation website for main line Shinkansen data.
+    """
+    print("🚀 Starting Cyberstation Live Scraper...")
     all_trains = []
 
     async with async_playwright() as p:
@@ -17,7 +86,7 @@ async def scrape_all():
         page = await context.new_page()
 
         try:
-            print("📡 Navigating to main site...")
+            print("📡 Navigating to JR Cyberstation...")
             await page.goto(WEBSITE_URL, timeout=60000)
             await page.click('a:has-text("Shinkansen Status")', timeout=10000)
             await page.wait_for_selector("#input-select-route", timeout=15000)
@@ -38,10 +107,10 @@ async def scrape_all():
             await page.keyboard.press("Escape")
             await page.wait_for_selector("#modal-select-route-shinkansen", state="hidden")
 
-            print(f"✅ Found {len(route_names)} routes to scan.")
+            print(f"✅ Found {len(route_names)} main routes to scan.")
 
             for i, route_name in enumerate(route_names):
-                print(f"\n🔍 Scanning route: {route_name}...")
+                print(f"🔍 Scanning route: {route_name}...")
                 
                 await page.click("#input-select-route")
                 await page.wait_for_selector("#modal-select-route-shinkansen.uk-open", timeout=5000)
@@ -73,23 +142,17 @@ async def scrape_all():
                         for row in rows:
                             cols = await row.query_selector_all("td")
                             
-                            # Ensure we have at least 2 columns like the HTML image shows
                             if len(cols) >= 2:
                                 delay_info = await cols[1].inner_text()
                                 delay_info = delay_info.strip()
 
-                                # Check if train is still running
                                 if "service ended" not in delay_info.lower() and delay_info != "":
-                                    
-                                    # --- THE HTML SCALPEL ---
-                                    # Find the <small> tag inside the first column
                                     small_tag = await cols[0].query_selector("small")
                                     
                                     if small_tag:
                                         location_text = await small_tag.inner_text()
                                         location_text = location_text.strip()
                                         
-                                        # To get the train name, we get the full text of the column and remove the <small> text
                                         full_text = await cols[0].inner_text()
                                         train_name = full_text.replace(location_text, "").strip()
                                         
@@ -97,7 +160,6 @@ async def scrape_all():
                                         station_b = ""
                                         is_between = False
                                         
-                                        # Parse the extracted <small> tag text
                                         if "Running between" in location_text:
                                             match = re.search(r'Running between\s+(.+?)\s+and\s+(.+)', location_text, re.IGNORECASE)
                                             if match:
@@ -122,12 +184,8 @@ async def scrape_all():
                                                 train_data["s_b"] = station_b  
                                                 
                                             all_trains.append(train_data)
-                                        else:
-                                            print(f"      ⚠️ Parser missed location: {location_text}")
-                                    else:
-                                        print("      ⚠️ No <small> tag found in this row.")
 
-                    except Exception as e:
+                    except Exception:
                         pass 
 
         except Exception as e:
@@ -138,13 +196,18 @@ async def scrape_all():
     return all_trains
 
 async def main():
-    trains_list = await scrape_all()
-    print(f"\n📦 Generating JSON with {len(trains_list)} active trains...")
+    # 1. Scrape the live data for the main lines
+    live_trains = await scrape_live_trains()
+    
+    # 2. Inject the scheduled ghost trains for the mountain lines
+    complete_train_list = inject_ghost_trains(live_trains)
+
+    print(f"\n📦 Generating final JSON payload with {len(complete_train_list)} active trains...")
     
     with open('live_trains.json', 'w') as f:
-        json.dump(trains_list, f)
+        json.dump(complete_train_list, f, indent=4)
     
-    print("✅ Success! live_trains.json saved.")
+    print("✅ Success! live_trains.json saved and ready for the ESP32.")
 
 if __name__ == "__main__":
     asyncio.run(main())
