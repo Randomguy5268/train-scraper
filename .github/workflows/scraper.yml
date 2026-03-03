@@ -39,6 +39,11 @@ jobs:
         run: |
           git config --global user.name "TrainBot"
           git config --global user.email "bot@github.com"
+          # Add both files
           git add live_trains.json timetable.json
+          # Commit the changes
           git commit -m "Update live and timetable data" || exit 0
+          # Pull the latest changes from the server to avoid the conflict
+          git pull --rebase origin main
+          # Now push
           git push
