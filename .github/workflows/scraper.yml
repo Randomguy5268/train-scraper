@@ -39,3 +39,25 @@ jobs:
           git add live_trains.json
           git commit -m "Update live train data" || exit 0
           git push
+          - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pytz beautifulsoup4
+          # If beautifulsoup4 isn't in your requirements.txt, keep it here
+
+      - name: Install Playwright Chromium
+        run: playwright install chromium
+
+      - name: Run Timetable Ripper
+        run: python timetable_ripper.py
+
+      - name: Run Scraper
+        run: python scraper_job.py
+
+      - name: Commit and Push Data
+        run: |
+          git config --global user.name "TrainBot"
+          git config --global user.email "bot@github.com"
+          git add live_trains.json timetable.json
+          git commit -m "Update live and timetable data" || exit 0
+          git push
