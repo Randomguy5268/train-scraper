@@ -8,6 +8,9 @@ from playwright.async_api import async_playwright
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
 def inject_ghost_trains(live_trains):
+    """
+    Injects mountain Shinkansens based on static timetable.json.
+    """
     try:
         with open('timetable.json', 'r') as f:
             timetable = json.load(f)
@@ -75,7 +78,17 @@ async def scrape_live_data():
         try:
             await page.goto(WEBSITE_URL, timeout=60000)
             await page.click('a:has-text("Shinkansen Status")')
-            await page.wait_for_selector("#input-select-route")
+            
+            # --- OPERATING HOURS CHECK ---
+            try:
+                # If this button isn't visible in 10s, the site is likely closed for the night
+                await page.wait_for_selector("#input-select-route", timeout=10000)
+            except Exception:
+                print("🌙 JR Cyberstation is currently closed. Skipping live scrape.")
+                await browser.close()
+                return [] 
+            # -----------------------------
+
             await page.click("#input-select-route")
             
             route_buttons = await page.query_selector_all("#modal-select-route-shinkansen button.uk-button")
@@ -104,7 +117,6 @@ async def scrape_live_data():
                                         full_txt = await cols[0].inner_text()
                                         t_name = full_txt.replace(loc_txt, "").strip().split('(')[0].strip()
                                         
-                                        # Parse Location
                                         if "Running between" in loc_txt:
                                             m = re.search(r'between\s+(.+?)\s+and\s+(.+)', loc_txt, re.IGNORECASE)
                                             if m:
@@ -128,9 +140,10 @@ async def scrape_live_data():
 async def main():
     live = await scrape_live_data()
     final = inject_ghost_trains(live)
+    
     with open('live_trains.json', 'w') as f:
         json.dump(final, f, indent=4)
-    print("✅ live_trains.json updated.")
+    print(f"✅ live_trains.json updated with {len(final)} total trains.")
 
 if __name__ == "__main__":
     asyncio.run(main())
