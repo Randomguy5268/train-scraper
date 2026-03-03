@@ -18,7 +18,18 @@ def inject_ghost_trains(live_trains):
     except FileNotFoundError:
         print("⚠️ timetable.json not found! Mountain lines will be empty.")
         return live_trains
+    # Add this inside inject_ghost_trains
+rename_map = {
+    "SAKURAMBOHIGASHINE": "SAKURANBO-HIGASHINE",
+    "NASUSHIOBARA": "NASU-SHIOBARA",
+    "HIGASHIHIROSHIMA": "HIGASHI-HIROSHIMA",
+    "KAMINOYAMA-ONSEN": "KAMINOYAMA ONSEN",
+    "SHIZUOKUISHI": "SHIZUKUSHI" 
+}
 
+# Then, where you set the station name:
+s_name = stop_a['station']
+ghost_train["s"] = rename_map.get(s_name, s_name)
     # Get current time in Japan
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.now(jst)
