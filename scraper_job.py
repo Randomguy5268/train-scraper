@@ -2,15 +2,15 @@ import json
 import asyncio
 import re
 from datetime import datetime
-import pytz # Run 'pip install pytz' if you don't have it
+import pytz 
 from playwright.async_api import async_playwright
 
 WEBSITE_URL = "https://www.jr.cyberstation.ne.jp/index_en.html"
 
 def inject_ghost_trains(live_trains):
     """
-    Reads your new timetable.json and injects the Akita/Yamagata trains
-    based on the current time in Japan.
+    Reads timetable.json and injects mountain Shinkansens.
+    Matches names to the ESP32 stationMap exactly.
     """
     try:
         with open('timetable.json', 'r') as f:
@@ -18,19 +18,17 @@ def inject_ghost_trains(live_trains):
     except FileNotFoundError:
         print("⚠️ timetable.json not found! Mountain lines will be empty.")
         return live_trains
-    # Add this inside inject_ghost_trains
-rename_map = {
-    "SAKURAMBOHIGASHINE": "SAKURANBO-HIGASHINE",
-    "NASUSHIOBARA": "NASU-SHIOBARA",
-    "HIGASHIHIROSHIMA": "HIGASHI-HIROSHIMA",
-    "KAMINOYAMA-ONSEN": "KAMINOYAMA ONSEN",
-    "SHIZUOKUISHI": "SHIZUKUSHI" 
-}
 
-# Then, where you set the station name:
-s_name = stop_a['station']
-ghost_train["s"] = rename_map.get(s_name, s_name)
-    # Get current time in Japan
+    # Dictionary to match Python scraped names to your ESP32 C++ names
+    rename_map = {
+        "SAKURAMBOHIGASHINE": "SAKURANBO-HIGASHINE",
+        "NASUSHIOBARA": "NASU-SHIOBARA",
+        "HIGASHIHIROSHIMA": "HIGASHI-HIROSHIMA",
+        "KAMINOYAMA-ONSEN": "KAMINOYAMA ONSEN",
+        "SHIZUOKUISHI": "SHIZUKUSHI", # Matches your C++ typo
+        "SHIROISHIZAO": "SHIROISHI-ZAO"
+    }
+
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.now(jst)
     current_minutes = now.hour * 60 + now.minute
@@ -40,14 +38,12 @@ ghost_train["s"] = rename_map.get(s_name, s_name)
         return h * 60 + m
 
     ghosts_added = 0
-
     for train_id, data in timetable.items():
         stops = data.get("stops", [])
         if len(stops) < 2:
             continue
 
         direction = data.get("direction", "Down")
-        # Extract name (e.g., "Komachi") from the ID we generated
         train_name = train_id.split('_')[0] 
 
         for i in range(len(stops) - 1):
@@ -60,14 +56,20 @@ ghost_train["s"] = rename_map.get(s_name, s_name)
             if time_a <= current_minutes <= time_b:
                 is_between = current_minutes > time_a
                 
+                # Apply the name fixes here so the ESP32 can find the station
+                raw_s_a = stop_a['station']
+                clean_s_a = rename_map.get(raw_s_a, raw_s_a)
+                
                 ghost_train = {
                     "n": train_name,
-                    "s": stop_a['station'],
+                    "s": clean_s_a,
                     "b": is_between,
                     "d": direction
                 }
+                
                 if is_between:
-                    ghost_train["s_b"] = stop_b['station']
+                    raw_s_b = stop_b['station']
+                    ghost_train["s_b"] = rename_map.get(raw_s_b, raw_s_b)
 
                 live_trains.append(ghost_train)
                 ghosts_added += 1
@@ -139,8 +141,6 @@ async def scrape_all():
                                         location_text = (await small_tag.inner_text()).strip()
                                         full_text = await cols[0].inner_text()
                                         train_name = full_text.replace(location_text, "").strip()
-                                        
-                                        # Clean name (remove "(Tohoku Line)" etc)
                                         train_name = train_name.split('(')[0].strip()
                                         
                                         station_a = ""
