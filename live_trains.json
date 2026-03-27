@@ -31,8 +31,8 @@
         "n": "Nozomi 18",
         "d": "Up",
         "b": true,
-        "s": "SHIN-SHIMONOSEKI",
-        "s_b": "ASA"
+        "s": "ASA",
+        "s_b": "SHIN-YAMAGUCHI"
     },
     {
         "n": "Sakura 744",
@@ -58,8 +58,9 @@
     {
         "n": "Kodama 946",
         "d": "Up",
-        "b": false,
-        "s": "TOKUYAMA"
+        "b": true,
+        "s": "TOKUYAMA",
+        "s_b": "SHIN-IWAKUNI"
     },
     {
         "n": "Nozomi 128",
@@ -69,11 +70,18 @@
         "s_b": "HIROSHIMA"
     },
     {
-        "n": "Mizuho 602",
+        "n": "Nozomi 90",
         "d": "Up",
         "b": true,
         "s": "HIROSHIMA",
         "s_b": "HIGASHIHIROSHIMA"
+    },
+    {
+        "n": "Mizuho 602",
+        "d": "Up",
+        "b": true,
+        "s": "HIGASHIHIROSHIMA",
+        "s_b": "MIHARA"
     },
     {
         "n": "Nozomi 126",
@@ -85,16 +93,8 @@
     {
         "n": "Kodama 944",
         "d": "Up",
-        "b": true,
-        "s": "HIGASHIHIROSHIMA",
-        "s_b": "MIHARA"
-    },
-    {
-        "n": "Nozomi 14",
-        "d": "Up",
-        "b": true,
-        "s": "SHIN-ONOMICHI",
-        "s_b": "FUKUYAMA"
+        "b": false,
+        "s": "MIHARA"
     },
     {
         "n": "Sakura 742",
@@ -104,18 +104,11 @@
         "s_b": "SHIN-KURASHIKI"
     },
     {
-        "n": "Nozomi 124",
+        "n": "Nozomi 14",
         "d": "Up",
         "b": true,
-        "s": "SHIN-KURASHIKI",
-        "s_b": "OKAYAMA"
-    },
-    {
-        "n": "Nozomi 120",
-        "d": "Up",
-        "b": true,
-        "s": "OKAYAMA",
-        "s_b": "AIOI"
+        "s": "FUKUYAMA",
+        "s_b": "SHIN-KURASHIKI"
     },
     {
         "n": "Nozomi 122",
@@ -123,6 +116,12 @@
         "b": true,
         "s": "OKAYAMA",
         "s_b": "AIOI"
+    },
+    {
+        "n": "Nozomi 124",
+        "d": "Up",
+        "b": false,
+        "s": "OKAYAMA"
     },
     {
         "n": "Nozomi 12",
@@ -138,7 +137,7 @@
         "s": "OKAYAMA"
     },
     {
-        "n": "Nozomi 10",
+        "n": "Nozomi 120",
         "d": "Up",
         "b": true,
         "s": "AIOI",
@@ -159,11 +158,11 @@
         "s_b": "NISHI-AKASHI"
     },
     {
-        "n": "Nozomi 118",
+        "n": "Nozomi 10",
         "d": "Up",
         "b": true,
-        "s": "NISHI-AKASHI",
-        "s_b": "SHIN-KOBE"
+        "s": "HIMEJI",
+        "s_b": "NISHI-AKASHI"
     },
     {
         "n": "Kodama 940",
@@ -172,18 +171,16 @@
         "s": "NISHI-AKASHI"
     },
     {
-        "n": "Nozomi 8",
+        "n": "Nozomi 118",
         "d": "Up",
-        "b": true,
-        "s": "SHIN-KOBE",
-        "s_b": "SHIN-OSAKA"
+        "b": false,
+        "s": "SHIN-KOBE"
     },
     {
-        "n": "Nozomi 346",
+        "n": "Nozomi 8",
         "d": "Up",
-        "b": true,
-        "s": "SHIN-OSAKA",
-        "s_b": "KYOTO"
+        "b": false,
+        "s": "SHIN-OSAKA"
     },
     {
         "n": "Nozomi 348",
@@ -207,6 +204,19 @@
         "s_b": "KYOTO"
     },
     {
+        "n": "Nozomi 346",
+        "d": "Up",
+        "b": false,
+        "s": "KYOTO"
+    },
+    {
+        "n": "Nozomi 6",
+        "d": "Up",
+        "b": true,
+        "s": "KYOTO",
+        "s_b": "MAIBARA"
+    },
+    {
         "n": "Nozomi 344",
         "d": "Up",
         "b": true,
@@ -214,20 +224,7 @@
         "s_b": "MAIBARA"
     },
     {
-        "n": "Nozomi 6",
-        "d": "Up",
-        "b": false,
-        "s": "KYOTO"
-    },
-    {
         "n": "Nozomi 86",
-        "d": "Up",
-        "b": true,
-        "s": "KYOTO",
-        "s_b": "MAIBARA"
-    },
-    {
-        "n": "Nozomi 342",
         "d": "Up",
         "b": true,
         "s": "KYOTO",
@@ -240,7 +237,7 @@
         "s": "KYOTO"
     },
     {
-        "n": "Nozomi 340",
+        "n": "Nozomi 342",
         "d": "Up",
         "b": true,
         "s": "MAIBARA",
@@ -248,6 +245,13 @@
     },
     {
         "n": "Nozomi 84",
+        "d": "Up",
+        "b": true,
+        "s": "MAIBARA",
+        "s_b": "GIFU-HASHIMA"
+    },
+    {
+        "n": "Nozomi 340",
         "d": "Up",
         "b": true,
         "s": "MAIBARA",
@@ -268,14 +272,14 @@
         "s_b": "NAGOYA"
     },
     {
-        "n": "Nozomi 4",
+        "n": "Nozomi 338",
         "d": "Up",
         "b": true,
         "s": "NAGOYA",
         "s_b": "MIKAWA-ANJO"
     },
     {
-        "n": "Nozomi 338",
+        "n": "Nozomi 4",
         "d": "Up",
         "b": true,
         "s": "NAGOYA",
@@ -309,13 +313,6 @@
         "s_b": "TOYOHASHI"
     },
     {
-        "n": "Hikari 700",
-        "d": "Up",
-        "b": true,
-        "s": "MIKAWA-ANJO",
-        "s_b": "TOYOHASHI"
-    },
-    {
         "n": "Nozomi 334",
         "d": "Up",
         "b": true,
@@ -323,14 +320,14 @@
         "s_b": "HAMAMATSU"
     },
     {
-        "n": "Nozomi 80",
+        "n": "Hikari 700",
         "d": "Up",
         "b": true,
         "s": "TOYOHASHI",
         "s_b": "HAMAMATSU"
     },
     {
-        "n": "Nozomi 244",
+        "n": "Nozomi 80",
         "d": "Up",
         "b": true,
         "s": "HAMAMATSU",
@@ -344,11 +341,11 @@
         "s_b": "KAKEGAWA"
     },
     {
-        "n": "Hikari 642",
+        "n": "Nozomi 244",
         "d": "Up",
         "b": true,
-        "s": "HAMAMATSU",
-        "s_b": "KAKEGAWA"
+        "s": "KAKEGAWA",
+        "s_b": "SHIZUOKA"
     },
     {
         "n": "Nozomi 332",
@@ -358,7 +355,7 @@
         "s_b": "SHIZUOKA"
     },
     {
-        "n": "Nozomi 2",
+        "n": "Hikari 642",
         "d": "Up",
         "b": true,
         "s": "KAKEGAWA",
@@ -372,18 +369,18 @@
         "s_b": "SHIN-FUJI"
     },
     {
-        "n": "Kodama 806",
+        "n": "Nozomi 2",
         "d": "Up",
         "b": true,
         "s": "SHIZUOKA",
         "s_b": "SHIN-FUJI"
     },
     {
-        "n": "Nozomi 78",
+        "n": "Kodama 806",
         "d": "Up",
         "b": true,
-        "s": "SHIN-FUJI",
-        "s_b": "MISHIMA"
+        "s": "SHIZUOKA",
+        "s_b": "SHIN-FUJI"
     },
     {
         "n": "Nozomi 328",
@@ -393,6 +390,13 @@
         "s_b": "MISHIMA"
     },
     {
+        "n": "Nozomi 78",
+        "d": "Up",
+        "b": true,
+        "s": "MISHIMA",
+        "s_b": "ATAMI"
+    },
+    {
         "n": "Hikari 640",
         "d": "Up",
         "b": true,
@@ -400,24 +404,11 @@
         "s_b": "ATAMI"
     },
     {
-        "n": "Nozomi 326",
+        "n": "Kodama 804",
         "d": "Up",
         "b": true,
         "s": "ATAMI",
         "s_b": "ODAWARA"
-    },
-    {
-        "n": "Kodama 804",
-        "d": "Up",
-        "b": false,
-        "s": "ATAMI"
-    },
-    {
-        "n": "Nozomi 76",
-        "d": "Up",
-        "b": true,
-        "s": "ODAWARA",
-        "s_b": "SHIN-YOKOHAMA"
     },
     {
         "n": "Nozomi 242",
@@ -427,10 +418,25 @@
         "s_b": "SHIN-YOKOHAMA"
     },
     {
+        "n": "Nozomi 326",
+        "d": "Up",
+        "b": true,
+        "s": "ODAWARA",
+        "s_b": "SHIN-YOKOHAMA"
+    },
+    {
+        "n": "Nozomi 76",
+        "d": "Up",
+        "b": true,
+        "s": "ODAWARA",
+        "s_b": "SHIN-YOKOHAMA"
+    },
+    {
         "n": "Nozomi 322",
         "d": "Up",
-        "b": false,
-        "s": "SHIN-YOKOHAMA"
+        "b": true,
+        "s": "SHIN-YOKOHAMA",
+        "s_b": "SHINAGAWA"
     },
     {
         "n": "Nozomi 240",
@@ -447,13 +453,6 @@
         "s_b": "SHINAGAWA"
     },
     {
-        "n": "Hikari 638",
-        "d": "Up",
-        "b": true,
-        "s": "SHIN-YOKOHAMA",
-        "s_b": "SHINAGAWA"
-    },
-    {
         "n": "Nozomi 238",
         "d": "Up",
         "b": true,
@@ -461,7 +460,13 @@
         "s_b": "TOKYO"
     },
     {
-        "n": "Kodama 815",
+        "n": "Hikari 638",
+        "d": "Up",
+        "b": false,
+        "s": "SHINAGAWA"
+    },
+    {
+        "n": "Hikari 707",
         "d": "Down",
         "b": true,
         "s": "TOKYO",
@@ -475,20 +480,13 @@
         "s_b": "SHINAGAWA"
     },
     {
-        "n": "Nozomi 349",
-        "d": "Down",
-        "b": true,
-        "s": "SHINAGAWA",
-        "s_b": "SHIN-YOKOHAMA"
-    },
-    {
-        "n": "Nozomi 353",
+        "n": "Kodama 815",
         "d": "Down",
         "b": false,
         "s": "SHINAGAWA"
     },
     {
-        "n": "Nozomi 65",
+        "n": "Nozomi 353",
         "d": "Down",
         "b": true,
         "s": "SHINAGAWA",
@@ -502,21 +500,14 @@
         "s_b": "SHIN-YOKOHAMA"
     },
     {
+        "n": "Nozomi 65",
+        "d": "Down",
+        "b": true,
+        "s": "SHINAGAWA",
+        "s_b": "SHIN-YOKOHAMA"
+    },
+    {
         "n": "Hikari 637",
-        "d": "Down",
-        "b": true,
-        "s": "SHIN-YOKOHAMA",
-        "s_b": "ODAWARA"
-    },
-    {
-        "n": "Nozomi 347",
-        "d": "Down",
-        "b": true,
-        "s": "SHIN-YOKOHAMA",
-        "s_b": "ODAWARA"
-    },
-    {
-        "n": "Nozomi 21",
         "d": "Down",
         "b": true,
         "s": "SHIN-YOKOHAMA",
@@ -530,24 +521,37 @@
         "s_b": "ODAWARA"
     },
     {
+        "n": "Nozomi 349",
+        "d": "Down",
+        "b": false,
+        "s": "SHIN-YOKOHAMA"
+    },
+    {
         "n": "Kodama 813",
         "d": "Down",
         "b": false,
         "s": "ODAWARA"
     },
     {
-        "n": "Nozomi 345",
+        "n": "Nozomi 347",
         "d": "Down",
         "b": true,
         "s": "ODAWARA",
         "s_b": "ATAMI"
     },
     {
-        "n": "Kodama 811",
+        "n": "Nozomi 21",
         "d": "Down",
         "b": true,
-        "s": "MISHIMA",
-        "s_b": "SHIN-FUJI"
+        "s": "ODAWARA",
+        "s_b": "ATAMI"
+    },
+    {
+        "n": "Nozomi 345",
+        "d": "Down",
+        "b": true,
+        "s": "ATAMI",
+        "s_b": "MISHIMA"
     },
     {
         "n": "Nozomi 137",
@@ -557,25 +561,10 @@
         "s_b": "SHIN-FUJI"
     },
     {
-        "n": "Nozomi 343",
+        "n": "Kodama 811",
         "d": "Down",
-        "b": true,
-        "s": "MISHIMA",
-        "s_b": "SHIN-FUJI"
-    },
-    {
-        "n": "Hikari 705",
-        "d": "Down",
-        "b": true,
-        "s": "SHIN-FUJI",
-        "s_b": "SHIZUOKA"
-    },
-    {
-        "n": "Nozomi 245",
-        "d": "Down",
-        "b": true,
-        "s": "SHIN-FUJI",
-        "s_b": "SHIZUOKA"
+        "b": false,
+        "s": "SHIN-FUJI"
     },
     {
         "n": "Nozomi 19",
@@ -585,7 +574,27 @@
         "s_b": "SHIZUOKA"
     },
     {
+        "n": "Nozomi 343",
+        "d": "Down",
+        "b": true,
+        "s": "SHIN-FUJI",
+        "s_b": "SHIZUOKA"
+    },
+    {
+        "n": "Hikari 705",
+        "d": "Down",
+        "b": false,
+        "s": "SHIZUOKA"
+    },
+    {
         "n": "Kodama 809",
+        "d": "Down",
+        "b": true,
+        "s": "SHIZUOKA",
+        "s_b": "KAKEGAWA"
+    },
+    {
+        "n": "Nozomi 245",
         "d": "Down",
         "b": true,
         "s": "SHIZUOKA",
@@ -602,8 +611,8 @@
         "n": "Nozomi 341",
         "d": "Down",
         "b": true,
-        "s": "SHIZUOKA",
-        "s_b": "KAKEGAWA"
+        "s": "KAKEGAWA",
+        "s_b": "HAMAMATSU"
     },
     {
         "n": "Nozomi 339",
@@ -611,13 +620,6 @@
         "b": true,
         "s": "KAKEGAWA",
         "s_b": "HAMAMATSU"
-    },
-    {
-        "n": "Kodama 807",
-        "d": "Down",
-        "b": true,
-        "s": "HAMAMATSU",
-        "s_b": "TOYOHASHI"
     },
     {
         "n": "Nozomi 63",
@@ -639,6 +641,12 @@
         "b": true,
         "s": "TOYOHASHI",
         "s_b": "MIKAWA-ANJO"
+    },
+    {
+        "n": "Kodama 807",
+        "d": "Down",
+        "b": false,
+        "s": "TOYOHASHI"
     },
     {
         "n": "Nozomi 129",
@@ -669,24 +677,17 @@
         "s_b": "NAGOYA"
     },
     {
-        "n": "Nozomi 333",
-        "d": "Down",
-        "b": true,
-        "s": "MIKAWA-ANJO",
-        "s_b": "NAGOYA"
-    },
-    {
         "n": "Hikari 703",
-        "d": "Down",
-        "b": false,
-        "s": "NAGOYA"
-    },
-    {
-        "n": "Nozomi 331",
         "d": "Down",
         "b": true,
         "s": "NAGOYA",
         "s_b": "GIFU-HASHIMA"
+    },
+    {
+        "n": "Nozomi 333",
+        "d": "Down",
+        "b": false,
+        "s": "NAGOYA"
     },
     {
         "n": "Nozomi 127",
@@ -703,6 +704,13 @@
         "s_b": "MAIBARA"
     },
     {
+        "n": "Nozomi 15",
+        "d": "Down",
+        "b": true,
+        "s": "GIFU-HASHIMA",
+        "s_b": "MAIBARA"
+    },
+    {
         "n": "Nozomi 329",
         "d": "Down",
         "b": true,
@@ -710,7 +718,7 @@
         "s_b": "MAIBARA"
     },
     {
-        "n": "Nozomi 15",
+        "n": "Nozomi 331",
         "d": "Down",
         "b": true,
         "s": "GIFU-HASHIMA",
@@ -754,8 +762,9 @@
     {
         "n": "Nozomi 13",
         "d": "Down",
-        "b": false,
-        "s": "KYOTO"
+        "b": true,
+        "s": "KYOTO",
+        "s_b": "SHIN-OSAKA"
     },
     {
         "n": "Nozomi 121",
@@ -774,8 +783,9 @@
     {
         "n": "Nozomi 11",
         "d": "Down",
-        "b": false,
-        "s": "SHIN-OSAKA"
+        "b": true,
+        "s": "SHIN-OSAKA",
+        "s_b": "SHIN-KOBE"
     },
     {
         "n": "Mizuho 607",
@@ -787,14 +797,16 @@
     {
         "n": "Nozomi 119",
         "d": "Down",
-        "b": false,
-        "s": "SHIN-KOBE"
+        "b": true,
+        "s": "SHIN-KOBE",
+        "s_b": "NISHI-AKASHI"
     },
     {
         "n": "Kodama 945",
         "d": "Down",
-        "b": false,
-        "s": "NISHI-AKASHI"
+        "b": true,
+        "s": "NISHI-AKASHI",
+        "s_b": "HIMEJI"
     },
     {
         "n": "Nozomi 9",
@@ -805,12 +817,6 @@
     },
     {
         "n": "Nozomi 117",
-        "d": "Down",
-        "b": false,
-        "s": "HIMEJI"
-    },
-    {
-        "n": "Sakura 749",
         "d": "Down",
         "b": true,
         "s": "HIMEJI",
@@ -824,25 +830,30 @@
         "s_b": "OKAYAMA"
     },
     {
-        "n": "Sakura 789",
+        "n": "Sakura 749",
         "d": "Down",
         "b": true,
         "s": "AIOI",
         "s_b": "OKAYAMA"
     },
     {
+        "n": "Sakura 789",
+        "d": "Down",
+        "b": false,
+        "s": "OKAYAMA"
+    },
+    {
         "n": "Hikari 735",
         "d": "Down",
         "b": true,
-        "s": "OKAYAMA",
-        "s_b": "SHIN-KURASHIKI"
+        "s": "SHIN-KURASHIKI",
+        "s_b": "FUKUYAMA"
     },
     {
         "n": "Kodama 943",
         "d": "Down",
-        "b": true,
-        "s": "OKAYAMA",
-        "s_b": "SHIN-KURASHIKI"
+        "b": false,
+        "s": "SHIN-KURASHIKI"
     },
     {
         "n": "Nozomi 5",
@@ -859,17 +870,18 @@
         "s_b": "SHIN-ONOMICHI"
     },
     {
+        "n": "Kodama 941",
+        "d": "Down",
+        "b": true,
+        "s": "HIGASHIHIROSHIMA",
+        "s_b": "HIROSHIMA"
+    },
+    {
         "n": "Nozomi 113",
         "d": "Down",
         "b": true,
-        "s": "MIHARA",
-        "s_b": "HIGASHIHIROSHIMA"
-    },
-    {
-        "n": "Kodama 941",
-        "d": "Down",
-        "b": false,
-        "s": "HIGASHIHIROSHIMA"
+        "s": "HIGASHIHIROSHIMA",
+        "s_b": "HIROSHIMA"
     },
     {
         "n": "Nozomi 3",
@@ -879,20 +891,14 @@
         "s_b": "HIROSHIMA"
     },
     {
-        "n": "Nozomi 1",
+        "n": "Nozomi 111",
         "d": "Down",
         "b": true,
         "s": "HIROSHIMA",
         "s_b": "SHIN-IWAKUNI"
     },
     {
-        "n": "Nozomi 111",
-        "d": "Down",
-        "b": false,
-        "s": "HIROSHIMA"
-    },
-    {
-        "n": "Sakura 787",
+        "n": "Nozomi 1",
         "d": "Down",
         "b": true,
         "s": "HIROSHIMA",
@@ -906,24 +912,31 @@
         "s_b": "TOKUYAMA"
     },
     {
-        "n": "Kodama 937",
+        "n": "Sakura 787",
+        "d": "Down",
+        "b": true,
+        "s": "SHIN-IWAKUNI",
+        "s_b": "TOKUYAMA"
+    },
+    {
+        "n": "Sakura 745",
         "d": "Down",
         "b": true,
         "s": "SHIN-YAMAGUCHI",
         "s_b": "ASA"
     },
     {
-        "n": "Sakura 745",
+        "n": "Kodama 937",
         "d": "Down",
         "b": false,
-        "s": "SHIN-YAMAGUCHI"
+        "s": "ASA"
     },
     {
         "n": "Nozomi 103",
         "d": "Down",
         "b": true,
-        "s": "ASA",
-        "s_b": "SHIN-SHIMONOSEKI"
+        "s": "SHIN-SHIMONOSEKI",
+        "s_b": "KOKURA"
     },
     {
         "n": "Hikari 731",
@@ -935,8 +948,9 @@
     {
         "n": "Mizuho 605",
         "d": "Down",
-        "b": false,
-        "s": "KOKURA"
+        "b": true,
+        "s": "KOKURA",
+        "s_b": "HAKATA"
     },
     {
         "n": "Hayabusa 14",
@@ -976,9 +990,8 @@
     {
         "n": "Hayabusa 50",
         "d": "Up",
-        "b": true,
-        "s": "FURUKAWA",
-        "s_b": "SENDAI"
+        "b": false,
+        "s": "SENDAI"
     },
     {
         "n": "Yamabiko 132",
@@ -988,24 +1001,24 @@
         "s_b": "FUKUSHIMA"
     },
     {
+        "n": "Yamabiko 130",
+        "d": "Up",
+        "b": false,
+        "s": "KORIYAMA"
+    },
+    {
         "n": "Komachi 10",
         "d": "Up",
         "b": true,
-        "s": "KORIYAMA",
-        "s_b": "SHIN-SHIRAKAWA"
+        "s": "SHIN-SHIRAKAWA",
+        "s_b": "NASUSHIOBARA"
     },
     {
         "n": "Hayabusa 10",
         "d": "Up",
         "b": true,
-        "s": "KORIYAMA",
-        "s_b": "SHIN-SHIRAKAWA"
-    },
-    {
-        "n": "Yamabiko 130",
-        "d": "Up",
-        "b": false,
-        "s": "KORIYAMA"
+        "s": "SHIN-SHIRAKAWA",
+        "s_b": "NASUSHIOBARA"
     },
     {
         "n": "Nasuno 270",
@@ -1024,8 +1037,9 @@
     {
         "n": "Yamabiko 210",
         "d": "Up",
-        "b": false,
-        "s": "NASUSHIOBARA"
+        "b": true,
+        "s": "NASUSHIOBARA",
+        "s_b": "UTSUNOMIYA"
     },
     {
         "n": "Tsubasa 128",
@@ -1070,14 +1084,7 @@
         "s_b": "TOKYO"
     },
     {
-        "n": "Yamabiko 133",
-        "d": "Down",
-        "b": true,
-        "s": "TOKYO",
-        "s_b": "UENO"
-    },
-    {
-        "n": "Tsubasa 133",
+        "n": "Hayabusa 13",
         "d": "Down",
         "b": true,
         "s": "TOKYO",
@@ -1091,11 +1098,16 @@
         "s_b": "OMIYA"
     },
     {
-        "n": "Yamabiko 55",
+        "n": "Yamabiko 133",
         "d": "Down",
-        "b": true,
-        "s": "UENO",
-        "s_b": "OMIYA"
+        "b": false,
+        "s": "UENO"
+    },
+    {
+        "n": "Tsubasa 133",
+        "d": "Down",
+        "b": false,
+        "s": "UENO"
     },
     {
         "n": "Tsubasa 177",
@@ -1103,6 +1115,12 @@
         "b": true,
         "s": "UENO",
         "s_b": "OMIYA"
+    },
+    {
+        "n": "Yamabiko 55",
+        "d": "Down",
+        "b": false,
+        "s": "OMIYA"
     },
     {
         "n": "Hayabusa 11",
@@ -1128,18 +1146,12 @@
     {
         "n": "Nasuno 255",
         "d": "Down",
-        "b": false,
-        "s": "OYAMA"
+        "b": true,
+        "s": "OYAMA",
+        "s_b": "UTSUNOMIYA"
     },
     {
         "n": "Hayabusa 9",
-        "d": "Down",
-        "b": true,
-        "s": "NASUSHIOBARA",
-        "s_b": "SHIN-SHIRAKAWA"
-    },
-    {
-        "n": "Tsubasa 129",
         "d": "Down",
         "b": true,
         "s": "NASUSHIOBARA",
@@ -1160,32 +1172,18 @@
         "s_b": "KORIYAMA"
     },
     {
+        "n": "Tsubasa 129",
+        "d": "Down",
+        "b": true,
+        "s": "SHIN-SHIRAKAWA",
+        "s_b": "KORIYAMA"
+    },
+    {
         "n": "Hayabusa 71",
         "d": "Down",
         "b": true,
         "s": "KORIYAMA",
         "s_b": "FUKUSHIMA"
-    },
-    {
-        "n": "Hayabusa 7",
-        "d": "Down",
-        "b": true,
-        "s": "FUKUSHIMA",
-        "s_b": "SHIROISHIZAO"
-    },
-    {
-        "n": "Komachi 7",
-        "d": "Down",
-        "b": true,
-        "s": "FUKUSHIMA",
-        "s_b": "SHIROISHIZAO"
-    },
-    {
-        "n": "Yamabiko 205",
-        "d": "Down",
-        "b": true,
-        "s": "SHIROISHIZAO",
-        "s_b": "SENDAI"
     },
     {
         "n": "Yamabiko 127",
@@ -1195,11 +1193,25 @@
         "s_b": "SENDAI"
     },
     {
+        "n": "Hayabusa 7",
+        "d": "Down",
+        "b": true,
+        "s": "SHIROISHIZAO",
+        "s_b": "SENDAI"
+    },
+    {
+        "n": "Komachi 7",
+        "d": "Down",
+        "b": true,
+        "s": "SHIROISHIZAO",
+        "s_b": "SENDAI"
+    },
+    {
         "n": "Hayabusa 5",
         "d": "Down",
         "b": true,
-        "s": "FURUKAWA",
-        "s_b": "KURIKOMA-KOGEN"
+        "s": "KURIKOMA-KOGEN",
+        "s_b": "ICHINOSEKI"
     },
     {
         "n": "Hayabusa 103",
@@ -1219,8 +1231,8 @@
         "n": "Toki 314",
         "d": "Up",
         "b": true,
-        "s": "NAGAOKA",
-        "s_b": "URASA"
+        "s": "URASA",
+        "s_b": "ECHIGO-YUZAWA"
     },
     {
         "n": "Toki 312",
@@ -1232,9 +1244,8 @@
     {
         "n": "Tanigawa 406",
         "d": "Up",
-        "b": true,
-        "s": "TAKASAKI",
-        "s_b": "HONJOWASEDA"
+        "b": false,
+        "s": "HONJOWASEDA"
     },
     {
         "n": "Toki 310",
@@ -1253,16 +1264,15 @@
     {
         "n": "Toki 313",
         "d": "Down",
-        "b": true,
-        "s": "OMIYA",
-        "s_b": "KUMAGAYA"
+        "b": false,
+        "s": "KUMAGAYA"
     },
     {
         "n": "Toki 311",
         "d": "Down",
         "b": true,
-        "s": "TAKASAKI",
-        "s_b": "JOMO-KOGEN"
+        "s": "JOMO-KOGEN",
+        "s_b": "ECHIGO-YUZAWA"
     },
     {
         "n": "Toki 309",
@@ -1322,8 +1332,8 @@
         "n": "Kagayaki 506",
         "d": "Up",
         "b": true,
-        "s": "JOETSUMYOKO",
-        "s_b": "IIYAMA"
+        "s": "IIYAMA",
+        "s_b": "NAGANO"
     },
     {
         "n": "Hakutaka 556",
@@ -1356,9 +1366,8 @@
     {
         "n": "Asama 610",
         "d": "Up",
-        "b": true,
-        "s": "OMIYA",
-        "s_b": "UENO"
+        "b": false,
+        "s": "UENO"
     },
     {
         "n": "Asama 607",
@@ -1398,8 +1407,9 @@
     {
         "n": "Hakutaka 555",
         "d": "Down",
-        "b": false,
-        "s": "UEDA"
+        "b": true,
+        "s": "UEDA",
+        "s_b": "NAGANO"
     },
     {
         "n": "Kagayaki 525",
@@ -1409,18 +1419,18 @@
         "s_b": "IIYAMA"
     },
     {
-        "n": "Kagayaki 505",
+        "n": "Hakutaka 553",
         "d": "Down",
         "b": true,
         "s": "JOETSUMYOKO",
         "s_b": "ITOIGAWA"
     },
     {
-        "n": "Hakutaka 553",
+        "n": "Kagayaki 505",
         "d": "Down",
         "b": true,
-        "s": "JOETSUMYOKO",
-        "s_b": "ITOIGAWA"
+        "s": "ITOIGAWA",
+        "s_b": "KUROBEUNAZUKIONSEN"
     },
     {
         "n": "Tsurugi 17",
@@ -1432,8 +1442,8 @@
         "n": "Tsurugi 15",
         "d": "Down",
         "b": true,
-        "s": "KANAZAWA",
-        "s_b": "KOMATSU"
+        "s": "KOMATSU",
+        "s_b": "KAGAONSEN"
     },
     {
         "n": "Kagayaki 503",
@@ -1453,20 +1463,22 @@
         "n": "Sakura 750",
         "d": "Up",
         "b": true,
-        "s": "SENDAI",
-        "s_b": "IZUMI"
+        "s": "IZUMI",
+        "s_b": "SHIN-MINAMATA"
     },
     {
         "n": "Sakura 748",
         "d": "Up",
-        "b": false,
-        "s": "KUMAMOTO"
+        "b": true,
+        "s": "KUMAMOTO",
+        "s_b": "SHIN-TAMANA"
     },
     {
         "n": "Sakura 746",
         "d": "Up",
-        "b": false,
-        "s": "KURUME"
+        "b": true,
+        "s": "KURUME",
+        "s_b": "SHIN-TOSU"
     },
     {
         "n": "Tsubame 310",
@@ -1479,42 +1491,41 @@
         "n": "Mizuho 603",
         "d": "Down",
         "b": true,
-        "s": "HAKATA",
-        "s_b": "SHIN-TOSU"
+        "s": "SHIN-TOSU",
+        "s_b": "KURUME"
     },
     {
         "n": "Tsubame 317",
         "d": "Down",
-        "b": true,
-        "s": "CHIKUGO-FUNAGOYA",
-        "s_b": "SHIN-OMUTA"
+        "b": false,
+        "s": "SHIN-OMUTA"
     },
     {
         "n": "Sakura 743",
         "d": "Down",
-        "b": true,
-        "s": "SHIN-TAMANA",
-        "s_b": "KUMAMOTO"
+        "b": false,
+        "s": "KUMAMOTO"
     },
     {
         "n": "Sakura 741",
         "d": "Down",
         "b": true,
-        "s": "SHIN-YATSUSHIRO",
-        "s_b": "SHIN-MINAMATA"
+        "s": "SHIN-MINAMATA",
+        "s_b": "IZUMI"
     },
     {
         "n": "Sakura 403",
         "d": "Down",
-        "b": false,
-        "s": "SENDAI"
+        "b": true,
+        "s": "SENDAI",
+        "s_b": "KAGOSHIMA-CHUO"
     },
     {
         "n": "KAMOME 18",
         "d": "Up",
         "b": true,
-        "s": "ISAHAYA",
-        "s_b": "SHIN-OMURA"
+        "s": "SHIN-OMURA",
+        "s_b": "URESHINO-ONSEN"
     },
     {
         "n": "KAMOME 13",
@@ -1533,9 +1544,8 @@
     {
         "n": "Hayabusa 1",
         "d": "Down",
-        "b": true,
-        "s": "SHIN-AOMORI",
-        "s_b": "OKUTSUGARU-IMABETSU"
+        "b": false,
+        "s": "OKUTSUGARU-IMABETSU"
     },
     {
         "n": "Tsubasa",
@@ -1555,7 +1565,7 @@
         "n": "Tsubasa",
         "s": "YAMAGATA",
         "s_b": "KAMINOYAMA ONSEN",
-        "b": false,
+        "b": true,
         "d": "Up"
     },
     {
